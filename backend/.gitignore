@@ -1,0 +1,17 @@
+data/*
+Results/*
+venv/
+__pycache__
+.ruff_cache/
+.ipynb_checkpoints
+.vscode
+*.env
+calculation/
+core/
+app/files
+.venv/
+db_dumps/*
+.mypy_cache/
+#MacOS
+.DS_Store
+.idea

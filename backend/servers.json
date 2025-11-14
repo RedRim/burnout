@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "backend_database",
+            "Group": "Servers",
+            "Port": 5432,
+            "Username": "postgres",
+            "Host": "burnout_db",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "burnout_db"
+        }
+    }
+}

@@ -1,0 +1,17 @@
+# Core web framework
+fastapi==0.115.6
+uvicorn==0.34.0
+
+# Data validation and settings
+pydantic==2.10.3
+pydantic-settings==2.5.2
+
+# Database
+sqlalchemy==2.0.35
+sqlmodel==0.0.22
+asyncpg==0.29.0
+alembic==1.13.2
+
+# Task queue
+celery==5.4.0
+redis==5.1.1

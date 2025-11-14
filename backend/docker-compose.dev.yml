@@ -1,0 +1,109 @@
+services:
+  db:
+    restart: always
+    image: postgres:17.2
+    container_name: burnout_db
+    hostname: ${DB_HOST}
+    env_file:
+      - ./.env
+    networks:
+      - burnout_network
+    ports:
+      - "${DB_OUT_PORT}:5432"
+    volumes:
+      - ./db_dumps:/dump/
+      - burnout_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}" ]
+      start_period: 2s
+      interval: 3s
+      timeout: 2s
+      retries: 15
+
+
+  redis:
+    image: redis:latest
+    container_name: burnout_redis
+    hostname: ${REDIS_HOST}
+    env_file:
+      - ./.env
+    ports:
+      - "${REDIS_IN_PORT}:${REDIS_PORT}"
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - burnout_network
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli -a $REDIS_PASSWORD ping | grep PONG" ]
+      start_period: 2s
+      interval: 1s
+      timeout: 2s
+      retries: 15
+    restart: unless-stopped
+
+
+  burnout_backend:
+    build:
+      dockerfile: ./Dockerfile
+    container_name: burnout_backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --reload
+    ports:
+      - "${BACKEND_OUT_PORT}:${PORT}"
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - ./.env
+    networks:
+      - burnout_network
+    volumes:
+      - ./:/srv
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://0.0.0.0:8000/docs || exit 1" ]
+      interval: 15s
+      timeout: 60s
+      retries: 5
+      start_period: 1m
+    restart: unless-stopped
+
+  burnout_celery:
+    build:
+      dockerfile: ./Dockerfile
+    container_name: burnout_celery
+    command: watchmedo auto-restart --directory=/srv/app --pattern=*.py --recursive -- celery -A app.celery worker -l INFO -c 1 -Q ${DEFAULT_CELERY_QUEUE} -n celery_burnout_worker
+    depends_on:
+      - burnout_backend
+      - redis
+    env_file:
+      - .env
+    volumes:
+      - ./:/srv
+    networks:
+      - burnout_network
+
+  pgadmin:
+    container_name: burnout_pgadmin
+    image: dpage/pgadmin4
+    env_file:
+      - ./.env
+    networks:
+        - burnout_network
+    ports:
+      - "8080:80"
+    volumes:
+      - burnout_pgadmin_data:/var/lib/pgadmin
+      - ./servers.json:/pgadmin4/servers.json
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  burnout_db_data:
+    driver: local
+  burnout_pgadmin_data:
+    driver: local
+
+networks:
+  burnout_network:
+    name: burnout_network
+    driver: bridge
