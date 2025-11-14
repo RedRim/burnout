@@ -21,5 +21,3 @@ class CeleryResponseTaskStatus(BaseModel):
     task_id: str
     status: CeleryTaskStatus
     result: Optional[Any] = None
-
-

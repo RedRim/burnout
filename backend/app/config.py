@@ -23,9 +23,11 @@ class DatabaseConfig(BaseSettings):
     def sync_dsn(self) -> str:
         return f"postgresql://{self.postgres_user}:{self.postgres_password}@{self.db_host}:{self.postgres_connection_port}/{self.postgres_db}"
 
+
 class Config:
     db: DatabaseConfig = DatabaseConfig()
     BASE_DIR: str = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 
 def setup_config() -> Config:
     return Config()

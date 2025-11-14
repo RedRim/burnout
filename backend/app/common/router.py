@@ -1,16 +1,18 @@
-from fastapi import APIRouter
 from celery.result import AsyncResult
+from fastapi import APIRouter
 
+from ..celery import celery_app
 from .schema import CeleryResponse, CeleryResponseTaskStatus
 from .tasks import sample_heartbeat
-from ..celery import celery_app
 
 base_router = APIRouter(prefix="/base", tags=["base"])
 task_stats_router = APIRouter(prefix="/tasks", tags=["tasks"])
 
+
 @base_router.get("/foo")
 async def foo() -> str:
     return "foo"
+
 
 @base_router.post(
     "/heartbeat",

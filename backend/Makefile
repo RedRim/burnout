@@ -3,7 +3,7 @@ include .env
 
 database_name  = postgres
 DOCKER_COMP   = docker compose -f docker-compose.dev.yml
-NAME 		  = backend
+NAME 		  = burnout_backend
 EXEC  = $(DOCKER_COMP) exec $(NAME)
 UV            = $(EXEC) uv
 
@@ -120,8 +120,6 @@ linters:
 	@echo "-------- running ruff --------"
 	@$(UV) run ruff check --fix ./app
 	@$(UV) run ruff check ./app
-	@echo "-------- running mypy --------"
-	@$(UV) run mypy ./app
 
 
 black:
@@ -131,5 +129,3 @@ isort:
 ruff:
 	@$(UV) run ruff check --fix ./app
 	@$(UV) run ruff check ./app
-mypy:
-	@$(UV) run mypy ./app

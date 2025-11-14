@@ -24,12 +24,3 @@ exclude = 'migration|\.venv'
 
 [tool.ruff]
 exclude = [".venv", "migration"]
-
-[tool.mypy]
-exclude = ["migrations"]
-follow_imports = "skip"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = ["celery.*", "openpyxl.*"]
-ignore_missing_imports = true

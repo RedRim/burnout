@@ -2,7 +2,6 @@ import logging
 
 from app.celery import celery_app
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -14,5 +13,3 @@ def sample_heartbeat() -> str:
     """
     logger.info("Sample heartbeat task executed")
     return "ok"
-
-
