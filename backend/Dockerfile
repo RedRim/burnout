@@ -28,7 +28,6 @@ WORKDIR /srv/
 
 COPY requirements/lock/requirements.txt ./requirements/lock/requirements.txt
 
-COPY entrypoints ./entrypoints/
 
 RUN pip install uv && uv pip sync ./requirements/lock/requirements.txt --system
 
