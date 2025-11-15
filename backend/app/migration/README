@@ -1,0 +1,10 @@
+Generic single-database configuration for Alembic.
+
+Commands:
+
+  - Generate new migration:
+        alembic revision --autogenerate -m "message"
+
+  - Apply migrations:
+        alembic upgrade head
+
